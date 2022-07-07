@@ -10,7 +10,7 @@ require("./routes/AuthApiRoutes.js")(app);
 if (process.env.NODE_ENV === 'production') {
     app.get('*', (req, res) => {
       console.log(path.join(__dirname, "../", "/client", "/build"));
-      res.sendFile(path.join(__dirname, "../", "/client", "/build", '/index.html'));
+      res.sendFile(path.resolve(__dirname, "../", "/client", "/build", '/index.html'));
     });
 }
 else{
