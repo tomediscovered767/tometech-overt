@@ -9,7 +9,7 @@ require("./routes/UserAuthRoutes.js")(app);
 
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
-    res.sendFile(path.join('client/build/index.html'), {'root': '../'})
+    res.sendFile('client/build/index.html', {'root': '../'})
   });
 }
 else{
