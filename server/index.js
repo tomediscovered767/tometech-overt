@@ -8,10 +8,8 @@ app.use(bodyParser.json());
 require("./routes/AuthApiRoutes.js")(app);
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join('client', 'build')));
-
     app.get('*', (req, res) => {
-      res.sendFile('index.html', { root: "../" });
+      res.sendFile('index.html', { root: "../client/build" });
     });
 }
 else{
