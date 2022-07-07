@@ -4,7 +4,7 @@
   "description": "",
   "main": "server/index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "cd server && npm start",
 
     "dev": "concurrently --kill-others-on-fail \"cd server && npm run dev\" \"cd client && npm start\" ",
 
