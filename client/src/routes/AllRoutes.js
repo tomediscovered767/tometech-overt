@@ -9,14 +9,14 @@ import AuthRoutes from '../routes/AuthRoutes.js';
 
 const AllRoutes = () => {
   return (
-    <Router>
+    <Router basename="/">
       <Routes>
         <Route element={<CommonLayout />}>
-          { PublicRoutes }
-
-          <Route element={<RequireAuth />}>
+          <Route path="/auth" element={<RequireAuth />}>
             { AuthRoutes }
           </Route>
+
+          { PublicRoutes }
         </Route>
       </Routes>
     </Router>

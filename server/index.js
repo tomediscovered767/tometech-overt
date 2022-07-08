@@ -2,16 +2,19 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const path = require('path');
+var fs = require('fs');
 
 app.use(bodyParser.json());
 
 require("./routes/AuthApiRoutes.js")(app);
 
-if (process.env.NODE_ENV === 'production') {
-    app.get('*', (req, res) => {
-      console.log(path.resolve(__dirname));
-      res.sendFile(path.resolve(__dirname, "../", "/client", "/build", '/index.html'));
-    });
+if (process.env.NODE_ENV?.trim() === 'production') {
+  app.use(express.static(path.join(__dirname, '../', 'client', 'build')));
+
+  app.get('*', (req, res) => {
+    const root = path.join(__dirname, '../', 'client', 'build')
+    res.sendFile('index.html', { root });
+  });
 }
 else{
   require('dotenv').config();

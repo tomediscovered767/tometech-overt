@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "server/index.js",
-  "proxy": "http://localhost:5000",
   "scripts": {
     "start": "cd server && npm start",
 
+    "dev-prod": "set NODE_ENV=production && npm run build-client && cd server && npm run dev\" ",
     "dev": "concurrently --kill-others-on-fail \"cd server && npm run dev\" \"cd client && npm start\" ",
 
     "build-client": "cd client && npm run build",
