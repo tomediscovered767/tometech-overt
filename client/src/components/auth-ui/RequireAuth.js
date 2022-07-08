@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 const RequireAuth = () => {
   return (
     <div>
-      Auth Required Here
+      Auth Required Here! 🔒
       <Outlet />
     </div>
   );

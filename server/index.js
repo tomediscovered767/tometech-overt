@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 
 require("./routes/AuthApiRoutes.js")(app);
 
-if (process.env.NODE_ENV?.trim() === 'production') {
+if(process.env.NODE_ENV?.trim() === 'production') {
   app.use(express.static(path.join(__dirname, '../', 'client', 'build')));
 
   app.get('*', (req, res) => {
@@ -18,6 +18,13 @@ if (process.env.NODE_ENV?.trim() === 'production') {
 }
 else{
   require('dotenv').config();
+
+  app.use(express.static(path.join(__dirname, '../', 'client', 'public')));
+
+  app.get('*', (req, res) => {
+    const root = path.join(__dirname, '../', 'client', 'public')
+    res.sendFile('index.html', { root });
+  });
 }
 
 

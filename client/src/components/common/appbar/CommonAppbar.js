@@ -4,15 +4,17 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import useAuthApi from "../../_factors/hooks/auth/useAuthApi.js";
 
 const CommonAppbar = props => {
+  const {signIn} = useAuthApi();
 
   const handleMenuButtonClick = () => {
-
+    signIn();
   };
 
   return (
-    <div className="tometech-appbar-wrapper">
+    <div className="common-appbar-wrapper">
       <AppBar position="sticky">
         <Toolbar>
           <IconButton
