@@ -24,7 +24,7 @@ const signIn = (username, password) => {
     })
     .then(response => {
       console.log(response)
-      response.json();
+      return response.json();
     })
     .then(result => {
       console.log(result)
