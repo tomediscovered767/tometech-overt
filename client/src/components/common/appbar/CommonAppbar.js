@@ -4,10 +4,11 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import useAuthApi from "../../_factors/hooks/auth/useAuthApi.js";
+import useAuth from "../../_factors/hooks/auth/useAuth.js";
+import AuthButtonWrapper from "../../auth-ui/AuthButtonWrapper.js";
 
 const CommonAppbar = props => {
-  const {signIn} = useAuthApi();
+  const { signIn } = useAuth();
 
   const handleMenuButtonClick = () => {
     signIn();
@@ -15,20 +16,20 @@ const CommonAppbar = props => {
 
   return (
     <div className="common-appbar-wrapper">
-      <AppBar position="sticky">
-        <Toolbar>
-          <IconButton
+      <AppBar position="sticky" sx={{backgroundColor: "rgba(50, 50, 150, 0.6)"}}>
+        <Toolbar variant="dense">
+          {/**<IconButton
             size="large" edge="start" color="inherit"
             aria-label="menu" sx={{ mr: 2 }}
             onClick={handleMenuButtonClick} >
             <MenuIcon  />
-          </IconButton>
+          </IconButton>*/}
 
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             {props.title}
           </Typography>
 
-          {/*<AuthButtonWrapper />*/}
+          <AuthButtonWrapper />
         </Toolbar>
       </AppBar>
     </div>

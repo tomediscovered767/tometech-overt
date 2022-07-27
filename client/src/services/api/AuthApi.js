@@ -6,10 +6,14 @@ const signUp = (username, email, password) => {
       body: JSON.stringify({ username, email, password })
     })
     .then(response => {
-      console.log(response)
+      return response.json();
+    })
+    .then(result => {
+      return resolve(result);
     })
     .catch(err => {
       console.log(err)
+      return reject(err);
     });
   });
 };
@@ -19,39 +23,64 @@ const signIn = (username, password) => {
   return new Promise(function(resolve, reject) {
     fetch('/auth/sign-in', {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-type': 'application/json' },
       body: JSON.stringify({ username, password })
     })
     .then(response => {
-      console.log(response)
       return response.json();
     })
     .then(result => {
-      console.log(result)
-      resolve(result);
+      return resolve(result);
     })
     .catch(err => {
       console.log(err)
-      reject(err);
+      return reject(err);
     });
   });
 };
 
 
-const signOut = (token) => {
+const signOut = (accessToken, refreshToken) => {
   return new Promise(function(resolve, reject) {
     fetch('/auth/sign-out', {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-type': 'application/json' },
-      body: JSON.stringify({ token })
+      body: JSON.stringify({ accessToken, refreshToken })
     })
     .then(response => {
-      console.log(response)
+      return resolve();
     })
     .catch(err => {
       console.log(err)
+      return reject(err);
     });
   });
 };
 
-module.exports = { signUp, signIn, signOut };
+const refresh = () => {
+  return new Promise(function(resolve, reject) {
+    console.log("Attempting authentication refresh: ");
+    fetch('/auth/refresh', {
+      method: 'POST',
+      credentials: 'include'
+    })
+    .then(response => {
+      if(response.status !== 200){
+        return resolve();
+      }
+
+      return response.json();
+    })
+    .then(result => {
+      return resolve(result);
+    })
+    .catch(err => {
+      console.log(err)
+      return reject(err);
+    });
+  });
+};
+
+module.exports = { signUp, signIn, signOut, refresh };

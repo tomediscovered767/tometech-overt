@@ -23,14 +23,11 @@ const CommonDialog = props => {
   };
 
   return (
-    <>
-    <Button onClick={handleClick}>Open simple dialog</Button>
     <Dialog maxWidth={maxWidth} fullWidth={fullWidth} onClose={handleClose} open={open}>
       {title ? <DialogTitle>{title}</DialogTitle> : title}
       {content ? <DialogContent>{content}</DialogContent> : content}
       {actions ? <DialogActions>{actions}</DialogActions> : null }
     </Dialog>
-    </>
   );
 };
 

@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
+import useAuth from '../_factors/hooks/auth/useAuth.js';
 
 const RequireAuth = () => {
+  const { accessToken } = useAuth();
+
   return (
     <div>
-      Auth Required Here! 🔒
-      <Outlet />
+      {accessToken ? <Outlet /> : <>Auth Required Here! 🔒</>}
     </div>
   );
 };

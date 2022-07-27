@@ -1,10 +1,13 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const cookies = require("cookie-parser");
 const path = require('path');
+require('dotenv').config();
 var fs = require('fs');
 
 app.use(bodyParser.json());
+app.use(cookies());
 
 require("./routes/AuthApiRoutes.js")(app);
 
@@ -17,8 +20,6 @@ if(process.env.NODE_ENV?.trim() === 'production') {
   });
 }
 else{
-  require('dotenv').config();
-
   app.use(express.static(path.join(__dirname, '../', 'client', 'public')));
 
   app.get('*', (req, res) => {
