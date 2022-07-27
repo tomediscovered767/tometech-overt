@@ -13,7 +13,7 @@ app.use(cookies());
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config()
 }
-console.log(process.env.CORS_DOMAINS)
+
 const domainsFromEnv = process.env.CORS_DOMAINS || "";
 const whitelist = domainsFromEnv.split(",").map(item => item.trim());
 const corsOptions = {

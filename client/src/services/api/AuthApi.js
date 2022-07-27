@@ -31,6 +31,7 @@ const signIn = (username, password) => {
       return response.json();
     })
     .then(result => {
+      console.log(result);
       return resolve(result);
     })
     .catch(err => {
