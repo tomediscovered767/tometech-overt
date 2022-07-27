@@ -38,7 +38,6 @@ const SignInForm = props => {
       // Navigate to where user was trying to go
       setPassword('');
       props.onClose();
-      console.log(location, from)
       navigate(from, { replace: true });
     })
     .catch(signInErr => {

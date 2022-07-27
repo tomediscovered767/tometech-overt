@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const cors = require("cors");
 const bodyParser = require('body-parser');
 const cookies = require("cookie-parser");
 const path = require('path');
@@ -8,6 +9,24 @@ var fs = require('fs');
 
 app.use(bodyParser.json());
 app.use(cookies());
+
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config()
+}
+console.log(process.env.CORS_DOMAINS)
+const domainsFromEnv = process.env.CORS_DOMAINS || "";
+const whitelist = domainsFromEnv.split(",").map(item => item.trim());
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error("Not allowed by CORS"))
+    }
+  },
+  credentials: true,
+}
+app.use(cors(corsOptions))
 
 require("./routes/AuthApiRoutes.js")(app);
 

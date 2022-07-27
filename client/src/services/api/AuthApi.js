@@ -63,6 +63,7 @@ const refresh = () => {
   return new Promise(function(resolve, reject) {
     console.log("Attempting authentication refresh: ");
     fetch('/auth/refresh', {
+      mode: "cors",
       method: 'POST',
       credentials: 'include'
     })
