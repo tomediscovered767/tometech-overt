@@ -4,8 +4,6 @@ import React, { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import CommonAppbar from './appbar/CommonAppbar.js';
-import CommonSnackbar from './snackbar/CommonSnackbar.js';
-import CommonDialog from './dialog/CommonDialog.js';
 
 import useAuth from '../_factors/hooks/auth/useAuth.js';
 import { AuthFormProvider } from "../_factors/context/auth/AuthFormContext.js";
@@ -14,30 +12,31 @@ import AuthFormWrapper from '../auth-ui/AuthFormWrapper.js';
 import GradientBackground from '../effects/gradient-background/GradientBackground.js';
 
 const CommonLayout = props => {
-  const { refresh } = useAuth();
+  const { refresh, isLoading } = useAuth();
 
   useEffect(()=>{
     refresh();
   }, []);
 
+  // useAuth.isLoading prevents pages from re-rendering when the AuthContext updates.
   return (
     <div className="common-layout-wrapper">
-      <AuthFormProvider>
-        <AuthFormWrapper />
+        <AuthFormProvider>
+          <AuthFormWrapper />
 
-        <CommonSnackbar />
-        <CommonDialog />
+            <GradientBackground />
+            <CommonAppbar />
 
-        <GradientBackground>
-          <CommonAppbar />
+            {!isLoading ?
+              <>
+                <div className="page-wrapper" style={{background:"none transparent", padding: "1em"}}>
+                  <Outlet />
+                </div>
+              </>
+            : <div>Loading...</div>}
 
-          <div className="page-wrapper" style={{ padding: "1em" }}>
-            <Outlet />
-          </div>
 
-        </GradientBackground>
-
-      </AuthFormProvider>
+        </AuthFormProvider>
     </div>
   );
 };

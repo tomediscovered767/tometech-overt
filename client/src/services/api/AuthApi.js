@@ -12,7 +12,6 @@ const signUp = (username, email, password) => {
       return resolve(result);
     })
     .catch(err => {
-      console.log(err)
       return reject(err);
     });
   });
@@ -31,11 +30,9 @@ const signIn = (username, password) => {
       return response.json();
     })
     .then(result => {
-      console.log(result);
       return resolve(result);
     })
     .catch(err => {
-      console.log(err)
       return reject(err);
     });
   });
@@ -54,7 +51,6 @@ const signOut = (accessToken, refreshToken) => {
       return resolve();
     })
     .catch(err => {
-      console.log(err)
       return reject(err);
     });
   });
@@ -79,7 +75,6 @@ const refresh = () => {
       return resolve(result);
     })
     .catch(err => {
-      console.log(err)
       return reject(err);
     });
   });

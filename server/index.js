@@ -29,6 +29,7 @@ const corsOptions = {
 app.use(cors(corsOptions))
 
 require("./routes/AuthApiRoutes.js")(app);
+require("./routes/GameListRoutes.js")(app);
 
 if(process.env.NODE_ENV?.trim() === 'production') {
   app.use(express.static(path.join(__dirname, '../', 'client', 'build')));

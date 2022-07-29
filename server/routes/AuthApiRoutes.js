@@ -118,7 +118,6 @@ module.exports = app => {
         });
       })
       .catch(compareErr => {
-        console.log(compareErr)
         return res.status(401).json({
           code: 3, err: compareErr, msg: "Could not compare passwords.",
           origin: "UserAuthRoutes /auth/sign-in"
@@ -126,7 +125,6 @@ module.exports = app => {
       });
     })
     .catch(findErr => {
-      console.log(findErr)
       return res.status(401).json({
         code: 4, err: findErr,
         msg: "Query unsuccessful. Could not find user: "+req.body.username,

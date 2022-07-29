@@ -83,6 +83,4 @@ const lock = (userid) => {
   });
 };
 
-module.exports = {
-  insert, find, checkUsername, lock
-};
+module.exports = { insert, find, checkUsername, lock };

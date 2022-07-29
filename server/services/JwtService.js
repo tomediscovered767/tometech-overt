@@ -32,7 +32,6 @@ const verifyRefreshToken = (token, callback) => {
 };
 
 const decodeToken = token => {
-  console.log("decode", token)
   return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
 };
 
@@ -41,8 +40,6 @@ const reqTokens = userid => {
     let accessToken  = makeAccessToken(userid);
     let refreshToken = makeRefreshToken(userid);
     let refTokenDecoded = decodeToken(refreshToken);
-
-    // Place claims in blacklist / whitelist
 
     return resolve({ accessToken, refreshToken });
   });
@@ -61,8 +58,6 @@ const reqRefresh = oldToken => {
       let accessToken  = makeAccessToken(userid);
       let refreshToken = makeRefreshToken(userid);
       let refTokenDecoded = decodeToken(refreshToken);
-
-      // Place claims in blacklist / whitelist
 
       return resolve({ accessToken, refreshToken });
     });

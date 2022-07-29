@@ -13,9 +13,9 @@ const App = () => {
   return (
     <div className="App">
       <ThemeProvider theme={createTheme()}>
-          <AccessTokenProvider>
-            <AllRoutes />
-          </AccessTokenProvider>
+        <AccessTokenProvider>
+          <AllRoutes />
+        </AccessTokenProvider>
       </ThemeProvider>
     </div>
   );

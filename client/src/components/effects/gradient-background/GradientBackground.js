@@ -17,7 +17,7 @@ const GradientBackground = props => {
 
   const BG = styled('div')({
     position: "fixed",
-    zIndex: 0,
+    zIndex: -10,
     background: `linear-gradient(-45deg,
       ${props.color1 ? props.color1 : defaults.color1},
       ${props.color2 ? props.color2 : defaults.color2},
@@ -29,7 +29,7 @@ const GradientBackground = props => {
     animation: `${gradientMove} 25s infinite ease`
   });
 
-  return ( <BG> {props.children} </BG> );
+  return ( <BG/> );
 };
 
 export default GradientBackground;
