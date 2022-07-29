@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import useGameList from '../../_factors/hooks/data/useGameList.js';
 import { DataGrid, GridToolbar, getGridStringOperators } from '@mui/x-data-grid';
-
-const filterOperators = getGridStringOperators().filter(({ value }) =>
-  ['equals', 'contains', 'startsWith' ].includes(value),
-);
+import Button from '@mui/material/Button';
 
 const columns = [
   { field: 'id', headerName: 'Id', minWidth: 80, flex: 0.3 },
   {
     field: 'name',
-    headerName: 'Name',
-    editable: true, minWidth: 100, flex: 1,
+    headerName: 'Name', minWidth: 100, flex: 1,
     renderCell: (params) => params.value
   },
   {
@@ -25,19 +21,40 @@ const columns = [
 const GameListPage = () => {
   const { gameList } = useGameList();
 
+  // Multi-filtering is only available in MUI x Pro
   return (
     <div style={{ height: "100%" }} className="game-list-page-wrapper">
       <div style={{ height: 600 }}>
-        <DataGrid disableColumnSelector sx={{
-            boxShadow: 2,
-            '& .MuiDataGrid-menuIcon': {
-              visibility: "visible",
-              width: "auto"
-            },
-            '& .MuiDataGrid-cell': { overflowX: "auto !important" },
+        <DataGrid disableColumnSelector
+          components={{
+            FilterPanelDeleteIcon: () =>
+              <Button variant="outlined" style={{width: '100%'}}>
+                Clear Filter
+              </Button>,
+            Toolbar: GridToolbar
           }}
-          componentsProps={{ filterPanel: { linkOperators: ['and'] } }}
-          rows={gameList ? gameList : []} columns={columns} />
+          componentsProps={{
+              panel: { sx: {
+                  '& .MuiDataGrid-filterForm': {
+                    display: 'flex', flexDirection: 'column'
+                  },
+                  '& .MuiFormControl-root': {
+                    width: '100%',
+                    marginBottom: 2
+                  }
+                },
+              },
+            }}
+           sx={{
+              boxShadow: 2,
+              '& .MuiDataGrid-menuIcon': {
+                visibility: "visible",
+                width: "auto"
+              },
+              '& .MuiDataGrid-cell': { overflowX: "auto !important" },
+              '& .MuiBadge-badge': {visibility: "hidden !important"}
+            }}
+            rows={gameList ? gameList : []} columns={columns} />
       </div>
     </div>
   );
