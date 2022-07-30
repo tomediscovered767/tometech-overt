@@ -1,65 +1,63 @@
 import React, { useEffect, useState } from 'react';
 import useGameList from '../../_factors/hooks/data/useGameList.js';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Box from '@mui/material/Box';
+import { DataGrid, GridToolbar, getGridStringOperators } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
+
+const columns = [
+  { field: 'id', headerName: 'Id', minWidth: 80, flex: 0.3 },
+  {
+    field: 'name',
+    headerName: 'Name', minWidth: 100, flex: 1,
+    renderCell: (params) => params.value
+  },
+  {
+    field: 'console', type: 'singleSelect',
+    valueOptions: ['GB Series', 'GB', 'GBC', 'GBA', 'SNES', 'PS1', 'Gamecube', 'N64'],
+    headerName: 'Console',
+    editable: true, minWidth: 100, flex: 0.3
+  }
+];
 
 const GameListPage = () => {
   const { gameList } = useGameList();
-  const [displayedGames, setDisplayedGames] = useState([]);
 
-  const [selectedGameConsoles, setSelectedGameConsoles] = useState(["GB", "GB Series"]);
-  const [filterText, setFilterText] = useState(null);
+  useEffect(() => {
+    document.title = 'Tometech - Game List'
+  }, []);
 
-  const filterList = () => {
-    if(gameList){
-      return gameList.filter(game => selectedGameConsoles.includes(game.console));
-    }
-
-    return [];
-  };
-
-  const filterByText = () => {
-
-  };
-
+  // Multi-filtering is only available in MUI x Pro
   return (
-    <div style={{overflow: "auto"}} className="game-list-page-wrapper">
-      <Box m={0} display="flex" justifyContent="flex-end" alignItems="flex-end">
-        <Button style={{pull: "right !important"}} variant="contained" endIcon={<FilterAltIcon />}>
-          Filter
-        </Button>
-      </Box>
-
-      <TableContainer>
-        <Table sx={{
-            minWidth: 650,
-            backgroundColor: "rgb(200, 200, 200, 0.3) !important"
-          }} aria-label="game list table">
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell align="left">Name</TableCell>
-              <TableCell align="right">Console</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {displayedGames.map((row) => (
-              <TableRow key={row.id+"-"+row.name}>
-                <TableCell component="th" scope="row">{row.id}</TableCell>
-                <TableCell align="left">{row.name}</TableCell>
-                <TableCell align="right">{row.console}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+    <div style={{ height: "100%" }} className="game-list-page-wrapper">
+      <div style={{ height: 600, backgroundColor: 'rgb(255,188,217, 0.4)' }}>
+        <DataGrid disableColumnSelector
+          components={{
+            FilterPanelDeleteIcon: () => <FilterAltOffIcon />,
+            Toolbar: GridToolbar
+          }}
+          componentsProps={{
+              panel: { sx: {
+                  '& .MuiDataGrid-filterForm': {
+                    display: 'flex', flexDirection: 'column'
+                  },
+                  '& .MuiFormControl-root': {
+                    width: '100%',
+                    marginBottom: 2
+                  }
+                },
+              },
+            }}
+           sx={{
+              '& .MuiDataGrid-menuIcon': {
+                visibility: "visible",
+                width: "auto"
+              },
+              '& .MuiDataGrid-columnHeaders': { borderBottom: '1px solid #a0a0a0', borderTop: '1px solid #a0a0a0' },
+              '& .MuiDataGrid-cell': { borderBottom: '1px solid #c0c0c0', overflowX: "auto !important" },
+              '& .MuiBadge-badge': {visibility: "hidden !important"}
+            }}
+            rows={gameList ? gameList : []} columns={columns} />
+      </div>
     </div>
   );
 };

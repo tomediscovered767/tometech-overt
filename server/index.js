@@ -7,6 +7,7 @@ const path = require('path');
 require('dotenv').config();
 var fs = require('fs');
 
+app.use(require("./routes/middleware/RequireHttps.js"));
 app.use(bodyParser.json());
 app.use(cookies());
 

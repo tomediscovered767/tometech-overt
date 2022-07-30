@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Navigate } from 'react-router-dom';
 import LandingPage from '../components/pages/public/LandingPage.js';
 import CommonSandbox from '../components/pages/public/CommonSandbox.js';
-import GameListPage from '../components/pages/public/GameListPage2.js';
+import GameListPage from '../components/pages/public/GameListPage.js';
 
 let paths = [
   <Route key="public-route-/"
