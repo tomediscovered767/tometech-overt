@@ -40,7 +40,7 @@ module.exports = app => {
             });
           }
 
-          jwtService.reqTokens(user.userid)
+          jwtService.reqTokens(insertResult.insertId)
           .then(tokens => {
             return res.status(200).cookie("tometech_rfrsh",
               { token: tokens.refreshToken },
@@ -57,6 +57,7 @@ module.exports = app => {
           });
         })
         .catch(insertErr => {
+          console.log(insertErr)
           return res.status(500).json({
             code: 4, data: inputData, err: insertErr,
             msg: "Query unsuccessful. Could not insert user into table.",

@@ -17,7 +17,7 @@ function SignupForm(props){
   const { auth, setAuth, signUp, authIsLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const from = location.pathname || "/";
 
   const [username, setUsername]   = useState("");
   const [email, setEmail]         = useState("");
@@ -123,9 +123,11 @@ function SignupForm(props){
         // Navigate to where user was trying to go
         setPassword('');
         setCPassword('');
+        props.onClose();
         navigate(from, { replace: true });
       })
       .catch(signUpErr => {
+        setHasGeneralError("Server error. Please refresh the page and try again.");
         /**
          * Errors:
          * 0: Query successful. Did not insert refresh token into table.

@@ -15,7 +15,7 @@ const useAuth = () => {
     return new Promise(function(resolve, reject) {
       authApi.signUp(username, email, password)
       .then(signUpResult => {
-        setAccessToken(signUpResult.data?.accessToken);
+        setAccessToken(prev => signUpResult.data?.accessToken);
         setIsLoading(false);
         return resolve();
       })

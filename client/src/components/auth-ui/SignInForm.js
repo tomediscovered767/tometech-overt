@@ -10,7 +10,7 @@ const SignInForm = props => {
   const { auth, setAuth, signIn, authIsLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+  const from = location.pathname || "/";
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -35,8 +35,8 @@ const SignInForm = props => {
 
     signIn(username, password)
     .then(() => {
-      // Navigate to where user was trying to go
       setPassword('');
+      // Navigate to where user was trying to go
       props.onClose();
       navigate(from, { replace: true });
     })
