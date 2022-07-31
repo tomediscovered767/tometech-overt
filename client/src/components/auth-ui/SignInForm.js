@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import useAuth from '../_factors/hooks/auth/useAuth.js';
 import Box from '@mui/material/Box';
@@ -27,33 +27,30 @@ const SignInForm = props => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    setHasUsernameError(false);
-    setUsernameError("");
-
-    setHasPasswordError(false);
-    setPasswordError("");
-
     signIn(username, password)
-    .then(() => {
+    .then((result) => {
       setPassword('');
+
       // Navigate to where user was trying to go
       props.onClose();
       navigate(from, { replace: true });
     })
     .catch(signInErr => {
-      /**
-       * Errors:
-       * 0: Query successful. Did not insert refresh token into table.
-       * 1: Query unsuccessful. Could not insert refresh token into table.
-       * 2: Incorrect password.
-       * 3: Could not compare passwords.
-       * 4: Query unsuccessful. Could not find user.
-       */
-
       setHasUsernameError(true);
       setUsernameError("Incorrect username or password.")
     });
   };
+
+  useEffect(()=>{
+    if(usernameError){
+      setUsernameError("");
+      setHasUsernameError(false);
+    }
+    if(passwordError){
+      setPasswordError("");
+      setHasPasswordError(false);
+    }
+  }, [username, password]);
 
   return (
     <div className="login-form-wrapper">

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import useAuth from '../_factors/hooks/auth/useAuth.js';
 import { Button, Paper, Grid, TextField, Switch } from "@mui/material";
@@ -13,8 +13,22 @@ import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import { validate } from 'validate.js';
 
+const constraints = {
+  username:{
+    presence: true,
+    length: { minimum: 6,   message: "must be at least 6 characters." }
+  },
+  email:{ presence: true, email: true },
+  password:{
+    presence: true,
+    length: { minimum: 8, message: "must be at least 8 characters." }
+  },
+  cpassword:{ presence: true, equality: "password" }
+};
+
 function SignupForm(props){
   const { auth, setAuth, signUp, authIsLoading } = useAuth();
+
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.pathname || "/";
@@ -28,7 +42,7 @@ function SignupForm(props){
   const [hasUsernameError, setHasUsernameError]   = useState(false);
   const [hasEmailError, setHasEmailError]         = useState(false);
   const [hasPasswordError, setHasPasswordError]   = useState(false);
-  const [hasCpasswordError, setHasCpasswordError] = useState(false);
+  const [hasCPasswordError, setHasCPasswordError] = useState(false);
 
   const [generalError, setGeneralError]     = useState("");
   const [usernameError, setUsernameError]   = useState("");
@@ -48,34 +62,8 @@ function SignupForm(props){
     setOpenSnackbar(false);
   };
 
-  const constraints = {
-    username:{
-      presence: true,
-      length: { minimum: 6,   message: "must be at least 6 characters." }
-    },
-    email:{ presence: true, email: true },
-    password:{
-      presence: true,
-      length: { minimum: 8, message: "must be at least 8 characters." }
-    },
-    cpassword:{ presence: true, equality: "password" }
-  };
-
   const validateFields = () => {
     let errors = validate({username, email, password, cpassword}, constraints);
-
-    if(!errors){
-      setHasUsernameError(false);
-      setHasEmailError(false);
-      setHasPasswordError(false);
-      setHasCpasswordError(false);
-      setUsernameError("");
-      setEmailError("");
-      setPasswordError("");
-      setCPasswordError("");
-
-      return true;
-    };
 
     if(Array.isArray(errors.username)){
       setHasUsernameError(true);
@@ -108,7 +96,7 @@ function SignupForm(props){
     }
 
     if(Array.isArray(errors.cpassword)){
-      setHasCpasswordError(true);
+      setHasCPasswordError(true);
       setCPasswordError(errors.cpassword[0]);
       return false;
     }
@@ -123,24 +111,35 @@ function SignupForm(props){
         // Navigate to where user was trying to go
         setPassword('');
         setCPassword('');
+
         props.onClose();
         navigate(from, { replace: true });
       })
       .catch(signUpErr => {
-        setHasGeneralError("Server error. Please refresh the page and try again.");
-        /**
-         * Errors:
-         * 0: Query successful. Did not insert refresh token into table.
-         * 1: Query unsuccessful. Could not insert refresh token into table.
-         * 2: Username is taken.
-         * 3: Query successful. Did not insert new user into table.
-         * 4: Query unsuccessful. Could not insert user into table.
-         * 5: Query unsuccessful. Could not check if username is taken.
-         * 6: Error hashing password.
-         */
+        setHasGeneralError("An internal error has occured. Please refresh the page and try again.");
+        setOpenSnackbar(true);
       });
     }
   };
+
+  useEffect(()=>{
+    if(usernameError){
+      setUsernameError("");
+      setHasUsernameError(false);
+    }
+    if(emailError){
+      setEmailError("");
+      setHasEmailError(false);
+    }
+    if(passwordError){
+      setPasswordError("");
+      setHasPasswordError(false);
+    }
+    if(cpasswordError){
+      setCPasswordError("");
+      setHasCPasswordError(false);
+    }
+  }, [username, email, password, cpassword]);
 
   return (
     <div className="signup-form-wrapper">
@@ -161,7 +160,7 @@ function SignupForm(props){
 
           <TextField id="standard-basic-4" label="Confirm Password"
                      type="password" variant="standard"
-                     error={hasCpasswordError} helperText={cpasswordError}
+                     error={hasCPasswordError} helperText={cpasswordError}
                      onChange={onCPasswordChange} />
         </Box>
 

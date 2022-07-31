@@ -15,6 +15,11 @@ const useAuth = () => {
     return new Promise(function(resolve, reject) {
       authApi.signUp(username, email, password)
       .then(signUpResult => {
+        if(signUpResult.code !== 5){
+          setIsLoading(false);
+          return reject(signUpResult);
+        }
+
         setAccessToken(prev => signUpResult.data?.accessToken);
         setIsLoading(false);
         return resolve();
@@ -31,9 +36,15 @@ const useAuth = () => {
     return new Promise(function(resolve, reject) {
       authApi.signIn(username, password)
       .then(signInResult => {
+        if(signInResult.code !== 5){
+          setIsLoading(false);
+          return reject(signInResult);
+        }
+
         setAccessToken(prev => signInResult?.data?.accessToken);
         setIsLoading(false);
-        return resolve();
+
+        return resolve(signInResult);
       })
       .catch(signInErr => {
         setIsLoading(false);
