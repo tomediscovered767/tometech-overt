@@ -5,16 +5,6 @@ const bcrypt = require('bcrypt');
 
 module.exports = app => {
 
-  /**
-   * Errors:
-   * 0: Query successful. Did not insert refresh token into table.
-   * 1: Query unsuccessful. Could not insert refresh token into table.
-   * 2: Username is taken.
-   * 3: Query successful. Did not insert new user into table.
-   * 4: Query unsuccessful. Could not insert user into table.
-   * 5: Query unsuccessful. Could not check if username is taken.
-   * 6: Error hashing password.
-   */
   app.post("/auth/sign-up", async (req, res) => {
     try{
       let inputData = { username: req.body.username, email: req.body.email,
@@ -40,24 +30,38 @@ module.exports = app => {
             });
           }
 
-          jwtService.reqTokens(insertResult.insertId)
-          .then(tokens => {
-            return res.status(200).cookie("tometech_rfrsh",
-              { token: tokens.refreshToken },
-              { expires: new Date(Date.now()),
-                httpOnly: true, secure: true
-              }).json({
-                code: 5, msg: "Success.",
-                data: { accessToken: tokens.accessToken },
-                origin: "UserAuthRoutes /auth/sign-in, jwtService.reqTokens"
+          let memberRole = 100;
+          usersDao.insertRole(insertResult.insertId, memberRole)
+          .then(insertRoleResult => {
+            if(insertRoleResult.affectedRows === 0){
+              return res.status(400).json({
+                code: 3, data: inputData,
+                msg: "Query successful. Did not insert new user role into table.",
+                origin: "UserAuthRoutes /auth/sign-up, UsersDao.insertRole"
               });
+            }
+
+            jwtService.reqTokens({userid: insertResult.insertId, roles: [memberRole]})
+            .then(tokens => {
+              return res.status(200).cookie("tometech_rfrsh",
+                { token: tokens.refreshToken },
+                { expires: new Date(Date.now()),
+                  httpOnly: true, secure: true
+                }).json({
+                  code: 5, msg: "Success.",
+                  data: { accessToken: tokens.accessToken },
+                  origin: "UserAuthRoutes /auth/sign-in, jwtService.reqTokens"
+                });
+            })
+            .catch(reqTokensErr => {
+              return res.status(500).json(reqTokensErr);
+            });
           })
-          .catch(reqTokensErr => {
-            return res.status(500).json(reqTokensErr);
+          .catch(insertRoleErr => {
+            return res.status(500).json(insertRoleErr);
           });
         })
         .catch(insertErr => {
-          console.log(insertErr)
           return res.status(500).json({
             code: 4, data: inputData, err: insertErr,
             msg: "Query unsuccessful. Could not insert user into table.",
@@ -81,14 +85,6 @@ module.exports = app => {
     }
   });
 
-  /**
-   * Errors:
-   * 0: Query successful. Did not insert refresh token into table.
-   * 1: Query unsuccessful. Could not insert refresh token into table.
-   * 2: Incorrect password.
-   * 3: Could not compare passwords.
-   * 4: Query unsuccessful. Could not find user.
-   */
   app.post("/auth/sign-in", (req, res) => {
     usersDao.find(req.body.username)
     .then(async (user) => {
@@ -101,7 +97,7 @@ module.exports = app => {
           });
         }
 
-        jwtService.reqTokens(user.userid)
+        jwtService.reqTokens({userid: user.userid, roles: user.roles})
         .then(tokens => {
           res.cookie("tometech_rfrsh", tokens.refreshToken,
             { expires: new Date(Date.now() + 9999999),
@@ -115,10 +111,12 @@ module.exports = app => {
             }).send();
         })
         .catch(reqTokensErr => {
+          // console.log(reqTokensErr)
           return res.status(500).json(reqTokensErr);
         });
       })
       .catch(compareErr => {
+        // console.log(compareErr)
         return res.status(401).json({
           code: 3, err: compareErr, msg: "Could not compare passwords.",
           origin: "UserAuthRoutes /auth/sign-in"
@@ -126,6 +124,7 @@ module.exports = app => {
       });
     })
     .catch(findErr => {
+      // console.log(findErr)
       return res.status(401).json({
         code: 4, err: findErr,
         msg: "Query unsuccessful. Could not find user: "+req.body.username,
@@ -176,7 +175,7 @@ module.exports = app => {
       });
     }
 
-    jwtService.reqTokens(jwtService.decodeToken(token)?.userid)
+    jwtService.reqTokens(jwtService.decodeToken(token))
     .then(tokens => {
       res.cookie("tometech_rfrsh", tokens.refreshToken,
         { expires: new Date(Date.now() + 9999999),

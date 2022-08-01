@@ -37,7 +37,7 @@ const GameListPage = () => {
   const { gameList } = useGameList();
 
   useEffect(() => {
-    document.title = 'Tometech - Game List'
+    document.title = 'Tometech - Game List';
   }, []);
 
   // Multi-filtering is only available in MUI x Pro

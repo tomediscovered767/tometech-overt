@@ -7,9 +7,9 @@ const config = {
   refreshExpiresIn: '10m'
 };
 
-const makeAccessToken = (userid) => {
+const makeAccessToken = (data) => {
   return jwt.sign(
-    { userid: userid },
+    { userid: data.userid, roles: data.roles },
       process.env.ACCESS_TOKEN_SECRET,
     { expiresIn: config.accessExpiresIn }
   );
@@ -19,9 +19,9 @@ const verifyAccessToken = token => {
   return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 };
 
-const makeRefreshToken = (userid) => {
+const makeRefreshToken = (data) => {
   return jwt.sign(
-    { jti: uuidv4(), userid: userid },
+    { jti: uuidv4(), userid: data.userid, roles: data.roles },
       process.env.REFRESH_TOKEN_SECRET,
     { expiresIn: config.refreshExpiresIn }
   );
@@ -35,10 +35,10 @@ const decodeToken = token => {
   return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
 };
 
-const reqTokens = userid => {
+const reqTokens = data => {
   return new Promise(function(resolve, reject) {
-    let accessToken  = makeAccessToken(userid);
-    let refreshToken = makeRefreshToken(userid);
+    let accessToken  = makeAccessToken(data);
+    let refreshToken = makeRefreshToken(data);
     let refTokenDecoded = decodeToken(refreshToken);
 
     return resolve({ accessToken, refreshToken });
@@ -54,7 +54,7 @@ const reqRefresh = oldToken => {
           origin: "JwtService.reqRefresh, verifyRefreshToken"
         });
       }
-
+      
       let accessToken  = makeAccessToken(userid);
       let refreshToken = makeRefreshToken(userid);
       let refTokenDecoded = decodeToken(refreshToken);

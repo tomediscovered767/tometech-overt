@@ -6,6 +6,10 @@ const cookies = new Cookies();
 
 const getRefresh = () =>  cookies.get("tometech_rfrsh");
 
+function decodeToken(t) {
+  return JSON.parse(window.atob(t.split('.')[1]));
+}
+
 const useAuth = () => {
   const { accessToken, setAccessToken } = useContext(AccessTokenContext);
   const [isLoading, setIsLoading] = useState(true);
@@ -85,7 +89,15 @@ const useAuth = () => {
     });
   };
 
-  return { accessToken, signIn, signUp, signOut, refresh, isLoading };
+  const getRoles = () => {
+    if(accessToken){
+      let payload = JSON.parse(window.atob(accessToken.split('.')[1]));
+      return payload.roles;
+    }
+    return [];
+  };
+
+  return { accessToken, signIn, signUp, signOut, refresh, isLoading, getRoles };
 };
 
 export default useAuth;

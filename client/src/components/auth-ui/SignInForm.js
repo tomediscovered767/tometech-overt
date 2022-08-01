@@ -36,6 +36,7 @@ const SignInForm = props => {
       navigate(from, { replace: true });
     })
     .catch(signInErr => {
+      console.log(signInErr)
       setHasUsernameError(true);
       setUsernameError("Incorrect username or password.")
     });

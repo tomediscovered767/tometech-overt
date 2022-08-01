@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import useAuth from '../_factors/hooks/auth/useAuth.js';
-import { Button, Paper, Grid, TextField, Switch } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
 import Box from '@mui/material/Box';
-import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import { validate } from 'validate.js';
 
@@ -27,7 +21,7 @@ const constraints = {
 };
 
 function SignupForm(props){
-  const { auth, setAuth, signUp, authIsLoading } = useAuth();
+  const { signUp, authIsLoading } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -38,7 +32,6 @@ function SignupForm(props){
   const [password, setPassword]   = useState("");
   const [cpassword, setCPassword] = useState("");
 
-  const [hasGeneralError, setHasGeneralError]     = useState(false);
   const [hasUsernameError, setHasUsernameError]   = useState(false);
   const [hasEmailError, setHasEmailError]         = useState(false);
   const [hasPasswordError, setHasPasswordError]   = useState(false);
@@ -59,11 +52,14 @@ function SignupForm(props){
 
   const handleCloseSnackbar = (event, reason) => {
     if(reason === 'clickaway') return;
+    setGeneralError("");
     setOpenSnackbar(false);
   };
 
   const validateFields = () => {
     let errors = validate({username, email, password, cpassword}, constraints);
+
+    if(!errors) return true;
 
     if(Array.isArray(errors.username)){
       setHasUsernameError(true);
@@ -116,13 +112,14 @@ function SignupForm(props){
         navigate(from, { replace: true });
       })
       .catch(signUpErr => {
-        setHasGeneralError("An internal error has occured. Please refresh the page and try again.");
+        console.log(signUpErr)
+        setGeneralError("An internal error has occured. Please refresh the page and try again.");
         setOpenSnackbar(true);
       });
     }
   };
 
-  useEffect(()=>{
+  const removeErrors = () => {
     if(usernameError){
       setUsernameError("");
       setHasUsernameError(false);
@@ -139,10 +136,10 @@ function SignupForm(props){
       setCPasswordError("");
       setHasCPasswordError(false);
     }
-  }, [username, email, password, cpassword]);
+  };
 
   return (
-    <div className="signup-form-wrapper">
+    <div className="signup-form-wrapper" onChange={removeErrors}>
       <form onSubmit={handleSubmit}>
         <Box style={{display:"flex", flexDirection:"column", margin:"0 1em"}}>
           <TextField id="standard-basic-1" label="Username" variant="standard"

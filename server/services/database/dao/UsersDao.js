@@ -22,7 +22,8 @@ const insert = (username, email, password) => {
 const find = (username) => {
   return new Promise(function(resolve, reject) {
     dbConnector.getConnection((err, con) => {
-      con.query("select * from tometech_users where name=?", [username],
+      con.query("select tometech_users.userid, name, email, password, locked_at, role from tometech_users "+
+      "right join tometech_userroles on tometech_users.userid = tometech_userroles.userid  where name=?", [username],
       (err, result, fields) => {
         if(err){
           return reject({
@@ -38,8 +39,10 @@ const find = (username) => {
             origin: "UsersDao.find"
           });
         }
-        resolve({ userid:   result[0].userid, username: result[0].name,
-                  email:    result[0].email,  password: result[0].password });
+
+        let roles = result.map(e => e.role);
+        resolve({ userid: result[0].userid, username: result[0].name,
+                  email:  result[0].email,  password: result[0].password, roles });
       });
     });
   });
@@ -83,4 +86,40 @@ const lock = (userid) => {
   });
 };
 
-module.exports = { insert, find, checkUsername, lock };
+const insertRole = (userid, role) => {
+  return new Promise(function(resolve, reject) {
+    dbConnector.getConnection((err, con) => {
+      con.query("insert into tometech_userroles (userid, role) values (?, ?)",
+      [userid, role], (err, result, fields) => {
+        if(err){
+          return reject({
+            code: 0, data: {userid, role}, err: err,
+            msg: "Could not insert user role.",
+            origin: "UsersDao.insertRole"
+          });
+        }
+        resolve(result);
+      });
+    });
+  });
+};
+
+const removeRole = (userid, role) => {
+  return new Promise(function(resolve, reject) {
+    dbConnector.getConnection((err, con) => {
+      con.query("delete from tometech_userroles where userid=(?) and role=(?)",
+      [userid, role], (err, result, fields) => {
+        if(err){
+          return reject({
+            code: 0, data: {userid, role}, err: err,
+            msg: "Could not delete user role.",
+            origin: "UsersDao.insertRole"
+          });
+        }
+        resolve(result);
+      });
+    });
+  });
+};
+
+module.exports = { insert, find, checkUsername, lock, insertRole, removeRole };
